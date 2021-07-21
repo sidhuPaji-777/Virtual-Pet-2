@@ -3,47 +3,87 @@ class Food
     constructor()
     {
 
-        this.milkBottleImg= loadImage("./images/Milk.png");
-        // image = loadImage("./images/Milk.png");
-        this.addFoodBtn = createButton("Add Food"); 
-        this.milkBottle = createSprite(180, height/2, 100, 50);
-        this.milkBottle.addImage("milk", this.milkBottleImg);
-        this.milkBottle.scale =0.1;
+        this.image = loadImage("./images/Milk.png");
     }
     
     getFoodStock()
     {
-        var foodStockRef = database.ref('lastFeed');
-        foodStockRef.on("value", function(data){
-            foodStockRef = data.val()
-        })
+        var foodStock = database.ref('Food');
+        foodStock.on("value", function(data){
+        foodCount = data.val()
+        });
     }
-    
-    updateFoodStock(state)
+
+    updateFoodStock(foodStockToUpdate)
     {
         database.ref('/').update({
-            // gameState : state
+            Food : foodStockToUpdate
+          })
+    }
+
+
+    getFeedTime() {
+        feedTime = database.ref('lastFed');
+        feedTime.on("value", (data)=>{
+            lastFed = data.val();
+        });
+    }
+
+    updateFeedTime() {
+        database.ref('/').update({
+            lastFed : hour()
         });
     }
     
-    deductFoodStock()
-    {
-        
-    }
     
-    
+
+
+    async start(){
+        var foodRef = await database.ref('Food').once("value");
+        if(foodRef.exists()) {
+            foodCount = foodRef.val();
+        }
+
+        var lastFed = await database.ref('lastFed').once("value");
+        if(lastFed.exists()) {
+            fedTime = lastFed.val();
+        }
+
+      }
+
+
     
     display()
     {
+        textSize(15);
+        fill("white");
+        stroke(5);
+
+        if(fedTime>=12)
+        {
+            text("Last Feed: " + fedTime%12 + " PM", 350, 90);
+        }
         
-        this.addFoodBtn.mousePressed(()=>{
-            writeStock(foodS);
-            
-            imageMode(CENTER);
-            image(this.milkBottleImg, 205, height/2, 70, 80)
-        })
+        else if(fedTime==0)
+        {
+            text("Last Feed: 12 AM", 350, 90);
+        }
+        else
+        {
+            text("Last Feed: " +fedTime+" AM", 350, 90);
+        }
 
-
-        this.addFoodBtn.position(600, 130);
+        var x = 80, y = 100;
+        imageMode(CENTER);
+        if(foodCount != 0) {
+            for(var i = 0; i < foodCount; i++) {
+                if(i % 10 === 0) {
+                    x = 80;
+                    y = y + 50;
+                }
+                image(milkImg, x, y, 50, 50);
+                x = x + 30;
+            }
+        }
     }
 }
