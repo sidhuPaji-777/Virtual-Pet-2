@@ -29,7 +29,7 @@ class Food
         });
     }
 
-    updateFeedTime() {
+    updateFedTime() {
         database.ref('/').update({
             lastFed : hour()
         });
