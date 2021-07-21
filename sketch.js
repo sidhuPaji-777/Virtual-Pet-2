@@ -3,15 +3,17 @@ var dog, database, foodS, foodStock;
 var feedBtn, addFoodBtn;
 var fedTime, lastFed;
 
-var food;
+var food, foodCount;
+var addFoodBtn;
 
-var dogimg, goodDog, milkBottleImg;
+var dogimg, happyDogImg, goodDog, milkImg;
 function preload()
 {
 	//load images here
   dogimg = loadImage("images/dogImg.png");
+  happyDogImg = loadImage("images/dogImg1.png");
   goodDog= loadImage("images/dogImg1.png");
-  milkBottleImg= loadImage("images/Milk.png");
+  milkImg= loadImage("images/Milk.png");
 
 }
 
@@ -26,20 +28,20 @@ function setup() {
   dog.scale =0.15;
 
   // Creating Milk bottle
-  // milkBottle = createSprite(width/2, height/2, 100, 50);
-  // milkBottle.addImage("milk", milkBottleImg);
-  // milkBottle.scale =0.2;
-
-  // Creating something
-  foodStock = database.ref('Food');
-  foodStock.on("value", readStock);
+  milkBottle = createSprite(width/2+100, height/2+50, 100, 50);
+  milkBottle.addImage("milk", milkImg);
+  milkBottle.scale =0.14;
+  milkBottle.visible = false;
+  milkBottle.rotation = 55;
 
   // Creating buttons
   feedBtn = createButton("Feed"); 
-  
   feedBtn.position(500, 130);
   
   food = new Food();
+
+  addFoodBtn = createButton("Add Food");
+  addFoodBtn.position(600, 130);
 }
 
 
@@ -51,74 +53,52 @@ function draw() {
 
   feedBtn.mousePressed(()=>{
 
-    writeStock(foodS, "-");
+    feedDog();
 
   })
 
-  // if(keyWentDown(UP_ARROW))
-  // {
-  //   writeStock(foodS);
-  //   dog.addImage("BOH", goodDog)
-  // }
+  addFoodBtn.mousePressed(()=>{
 
-  // else if(keyWentDown(DOWN_ARROW))
-  // {
-  //   writeStock(foodS);
-  //   dog.addImage("BOH", dogimg)
-  // }
+    addFood();
 
-  if(lastFed>=12)
-  {
-    text("Last Feed: " + lastFed%12 + "PM", 350, 90);
-  }
-  
-  else if(lastFed==0)
-  {
-    text("Last Feed: 12 AM", 350, 90);
-  }
-  else
-  {
-    text("Last Feed: " +lastFed+" AM", 350, 90);
-  }
-
-
-  fedTime=database.ref("FeedTime");
-  fedTime.on("value", function(data){
-    lastFed=data.val();
   })
 
 
   food.display();
   drawSprites();
-  //add styles here
   textSize(25);
-  text("Press UP Arrow key to Feed the Dog", 200, 50);
-
-  // textSize(17);
+  
   // text("Press UP Arrow key to Feed the Dog", 200, 50);
 }
 
-function readStock(data)
-{
-  foodS = data.val();
+
+
+
+function feedDog() {
+  food.getFoodStock();
+  food.updateFedTime();
+  // fedTime:hour();
+  // console.log(updateFeedTime);
+
+  if(foodCount === 0) {
+    foodCount = 0;
+    milkBottle.visible = false;
+    dog.addImage(dogImg);
+  }
+  else {
+    food.updateFoodStock(foodCount - 1);
+    milkBottle.visible = true;
+    // dog.addImage(happyDogImg);
+    dog.addImage("BOH", happyDogImg);
+    dog.scale = 0.18;
+  }
 }
 
-
-function writeStock(x, op)
-{
-
-  if(op=="-")
-  {
-    x=x-1;
-  }
-  else
-  {
-    x=x+1;
-  }
-    
-    
-
-  database.ref('/').update({
-    Food: x
-  })
-}
+function addFood() {
+  food.getFoodStock();
+ 
+  food.updateFoodStock(foodCount + 1);
+  
+  dog.addImage("BOH", dogimg);
+  milkBottle.visible = false;
+ }
