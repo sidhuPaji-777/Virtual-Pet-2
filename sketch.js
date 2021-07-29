@@ -1,7 +1,7 @@
 //Create variables here
 var dog, database, foodS, foodStock;
 var feedBtn, addFoodBtn;
-var fedTime, lastFed;
+var feedTime, lastFed;
 
 var food, foodCount;
 var addFoodBtn;
@@ -39,6 +39,7 @@ function setup() {
   feedBtn.position(500, 130);
   
   food = new Food();
+  food.start();
 
   addFoodBtn = createButton("Add Food");
   addFoodBtn.position(600, 130);
@@ -77,8 +78,6 @@ function draw() {
 function feedDog() {
   food.getFoodStock();
   food.updateFedTime();
-  // fedTime:hour();
-  // console.log(updateFeedTime);
 
   if(foodCount === 0) {
     foodCount = 0;
