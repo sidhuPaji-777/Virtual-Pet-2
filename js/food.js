@@ -39,14 +39,10 @@ class Food
 
 
     async start(){
-        var foodRef = await database.ref('Food').once("value");
-        if(foodRef.exists()) {
-            foodCount = foodRef.val();
-        }
 
         var lastFed = await database.ref('lastFed').once("value");
         if(lastFed.exists()) {
-            fedTime = lastFed.val();
+            feedTime = lastFed.val();
         }
 
       }
@@ -59,18 +55,18 @@ class Food
         fill("white");
         stroke(5);
 
-        if(fedTime>=12)
+        if(feedTime>=12)
         {
-            text("Last Feed: " + fedTime%12 + " PM", 350, 90);
+            text("Last Feed: " + feedTime%12 + " PM", 350, 90);
         }
         
-        else if(fedTime==0)
+        else if(feedTime===0)
         {
             text("Last Feed: 12 AM", 350, 90);
         }
         else
         {
-            text("Last Feed: " +fedTime+" AM", 350, 90);
+            text("Last Feed: " +feedTime+" AM", 350, 90);
         }
 
         var x = 80, y = 100;
